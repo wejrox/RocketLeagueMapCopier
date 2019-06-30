@@ -229,7 +229,6 @@
             this.lblCopyResult.TabIndex = 18;
             this.lblCopyResult.Text = "N/A";
             this.lblCopyResult.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblCopyResult.Click += new System.EventHandler(this.lblCopyResult_Click);
             // 
             // txtModsDir
             // 

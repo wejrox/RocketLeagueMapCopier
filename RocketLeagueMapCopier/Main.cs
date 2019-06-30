@@ -1,13 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RocketLeagueMapCopier
@@ -22,7 +16,9 @@ namespace RocketLeagueMapCopier
             InitializeComponent();
         }
 
-        // Edit this however you like, just loading default stuff
+        /// <summary>
+        /// Form load method, loads defaults from application.
+        /// </summary>
         private void Main_Load(object sender, EventArgs e)
         {
             txtModsDir.Text = Properties.Settings.Default.modsDir;
@@ -35,7 +31,9 @@ namespace RocketLeagueMapCopier
             txtPackage5.Text = Properties.Settings.Default.packageName5;
         }
 
-        // Edit this however you like, just storing default stuff
+        /// <summary>
+        /// Form close method, sets defaults for next load based on the current values.
+        /// </summary>
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
         {
             Properties.Settings.Default.mapDir = txtMapDir.Text;
@@ -49,9 +47,12 @@ namespace RocketLeagueMapCopier
             Properties.Settings.Default.Save();
         }
 
+        /// <summary>
+        /// Handles the hopying of the map and package files.
+        /// </summary>
         private void btnApplyMap_Click(object sender, EventArgs e)
         {
-            // Grab the package names (I wish i knew how to make form elements into an array..)
+            // Grab the package names.
             List<string> packages = new List<string>();
             if (chkPackage1.Checked)
                 packages.Add(txtPackage1.Text);
@@ -64,7 +65,7 @@ namespace RocketLeagueMapCopier
             if (chkPackage5.Checked)
                 packages.Add(txtPackage5.Text);
 
-            // Copy straight over the existing map
+            // Copy straight over the existing map.
             string mapOrigFile = Path.Combine(txtMapDir.Text, txtMapName.Text + ".udk");
             string mapDestFile = Path.Combine(txtModsDir.Text, txtMapName.Text + ".upk");
             try {
@@ -76,6 +77,7 @@ namespace RocketLeagueMapCopier
                 lblCopyResult.Text = "Failed";
                 return;
             }
+
             catch (Exception) {
                 MessageBox.Show("Something's gone wrong. \nCheck your Directories and try again.\n Post on reddit if it persists");
                 lblCopyResult.BackColor = Color.Red;
@@ -83,18 +85,18 @@ namespace RocketLeagueMapCopier
                 return;
             }
 
-            // Copy over the packages
-            foreach(string s in packages)
+            // Copy over the packages.
+            foreach(string packageName in packages)
             {
-                string packOrigFile = Path.Combine(txtMapDir.Text, s);
-                string packDestFile = Path.Combine(txtModsDir.Text, s);
+                string packOrigFile = Path.Combine(txtMapDir.Text, packageName);
+                string packDestFile = Path.Combine(txtModsDir.Text, packageName);
 
                 try {
                     File.Copy(packOrigFile, packDestFile, true);
                 } catch (FileNotFoundException) {
                     lblCopyResult.BackColor = Color.Yellow;
                     lblCopyResult.Text = "Partial Success";
-                    MessageBox.Show("'" + s + "' Doesn't exist.\n" + 
+                    MessageBox.Show("'" + packageName + "' Doesn't exist.\n" + 
                                     "Make sure you included '.upk' in your file name.\n" + 
                                     "Package not copied.");
                 }
@@ -110,22 +112,17 @@ namespace RocketLeagueMapCopier
                 }
             }
 
-            // Make sure there weren't complications
+            // Make sure there weren't complications.
             if (lblCopyResult.BackColor != Color.Yellow && lblCopyResult.BackColor != Color.Red)
             {
                 lblCopyResult.BackColor = Color.LightGreen;
 
-                // Notify of completion (multiple values so they know it's worked when they re-copy it again.)
+                // Notify of completion (multiple values so they know it's worked if they re-copy it again.).
                 if (lblCopyResult.Text == results[0])
                     lblCopyResult.Text = results[1];
                 else
                     lblCopyResult.Text = results[0];
             }
-        }
-
-        private void lblCopyResult_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
